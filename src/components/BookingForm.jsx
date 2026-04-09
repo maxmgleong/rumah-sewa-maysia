@@ -1,12 +1,16 @@
 import { useState, useRef } from 'react'
-import { ArrowLeft, Camera } from 'lucide-react'
+import { ArrowLeft, Camera, Bed } from 'lucide-react'
 
-export default function BookingForm({ room, onBack, onSubmit }) {
-  const [form, setForm] = useState({ nama: '', ic: '', telefon: '', tarikhMasuk: '' })
-  const [icImage, setIcImage] = useState(null)
+export default function BookingForm({ room, property, onBack, onSubmit }) {
+  const [form, setForm] = useState({
+    nama: '', ic: '', telefon: '', tarikhMasuk: '',
+    selectedBedId: room.beds.find(b => !b.occupied)?.id || ''
+  })
   const [icPreview, setIcPreview] = useState(null)
   const [errors, setErrors] = useState({})
   const fileRef = useRef()
+
+  const availableBeds = room.beds.filter(b => !b.occupied)
 
   function handleChange(e) {
     const { name, value } = e.target
@@ -17,7 +21,6 @@ export default function BookingForm({ room, onBack, onSubmit }) {
   function handleImage(e) {
     const file = e.target.files[0]
     if (file) {
-      setIcImage(file)
       const reader = new FileReader()
       reader.onloadend = () => setIcPreview(reader.result)
       reader.readAsDataURL(file)
@@ -30,6 +33,7 @@ export default function BookingForm({ room, onBack, onSubmit }) {
     if (!form.ic.trim()) errs.ic = 'Sila masukkan No. IC'
     if (!form.telefon.trim()) errs.telefon = 'Sila masukkan no. telefon'
     if (!form.tarikhMasuk) errs.tarikhMasuk = 'Sila pilih tarikh masuk'
+    if (!form.selectedBedId) errs.bed = 'Sila pilih katil'
     return errs
   }
 
@@ -37,7 +41,8 @@ export default function BookingForm({ room, onBack, onSubmit }) {
     e.preventDefault()
     const errs = validate()
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
-    onSubmit({ ...form, icImage: icPreview })
+    const selectedBed = room.beds.find(b => b.id === form.selectedBedId)
+    onSubmit({ ...form, selectedBedName: selectedBed?.name || '' })
   }
 
   return (
@@ -50,11 +55,26 @@ export default function BookingForm({ room, onBack, onSubmit }) {
           <div>
             <h1 className="text-white text-lg font-bold">Borang Tempahan</h1>
             <p className="text-secondary text-sm">{room.name}</p>
+            <p className="text-secondary/70 text-xs">{property?.name}</p>
           </div>
         </div>
       </div>
       <div className="px-4 -mt-4">
         <form onSubmit={handleSubmit} className="bg-white rounded-3xl card-shadow p-5 space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-primary mb-1.5">Pilih Katil *</label>
+            <div className="grid grid-cols-2 gap-2">
+              {availableBeds.map(bed => (
+                <button key={bed.id} type="button" onClick={() => { setForm(prev => ({ ...prev, selectedBedId: bed.id })); setErrors(prev => ({ ...prev, bed: '' })) }}
+                  className={`p-3 rounded-xl border-2 text-left transition-colors ${form.selectedBedId == bed.id ? 'border-primary bg-accent' : 'border-accent'}`}>
+                  <Bed size={16} className="text-primary mb-1" />
+                  <p className="text-sm font-semibold text-primary">{bed.name}</p>
+                  <p className="text-xs text-green-600">🟢 Tersedia</p>
+                </button>
+              ))}
+            </div>
+            {errors.bed && <p className="text-red-500 text-xs mt-1">{errors.bed}</p>}
+          </div>
           <div>
             <label className="block text-sm font-semibold text-primary mb-1.5">Nama Penuh</label>
             <input name="nama" value={form.nama} onChange={handleChange} placeholder="Contoh: Ahmad bin Ali"
@@ -92,6 +112,12 @@ export default function BookingForm({ room, onBack, onSubmit }) {
               )}
             </div>
             <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={handleImage} className="hidden" />
+          </div>
+          <div className="bg-accent rounded-xl p-3">
+            <p className="text-xs text-muted">Bilik Dipilih:</p>
+            <p className="font-bold text-primary">{room?.name}</p>
+            <p className="text-sm text-muted">{property?.name}</p>
+            <p className="text-sm text-primary font-semibold">RM {room?.price}/bulan</p>
           </div>
           <button type="submit" className="btn-primary w-full text-center mt-2">✅ Hantar Permohonan</button>
         </form>
