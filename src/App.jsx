@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { INITIAL_PROPERTIES } from './data/properties'
 import Header from './components/Header'
+import FilterTabs from './components/FilterTabs'
 import PropertyCard from './components/PropertyCard'
 import PropertyDetail from './components/PropertyDetail'
 import RoomDetail from './components/RoomDetail'
@@ -9,7 +10,7 @@ import SuccessPage from './components/SuccessPage'
 import Dashboard from './components/Dashboard'
 import AdminPanel from './components/AdminPanel'
 
-const STORAGE_KEY = 'rental_properties'
+const STORAGE_KEY = 'rental_properties_v2'
 
 export default function App() {
   const [view, setView] = useState('rooms')
