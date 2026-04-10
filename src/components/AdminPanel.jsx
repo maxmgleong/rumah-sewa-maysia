@@ -1,16 +1,32 @@
 import { useState, useRef } from 'react'
 import { ArrowLeft, Edit2, Trash2, Plus, Save, X, Upload, Calendar, DollarSign, Users, CheckCircle, Phone, Image } from 'lucide-react'
 import { FACILITIES_LIST } from '../data/properties'
+import { uploadImage } from '../firebase'
 
-function ImageUpload({ value, onChange, label }) {
+function ImageUpload({ value, onChange, label, folder }) {
   const [preview, setPreview] = useState(value || null)
+  const [uploading, setUploading] = useState(false)
   const fileRef = useRef()
 
-  function handleFile(e) {
+  async function handleFile(e) {
     const file = e.target.files[0]
     if (file) {
+      setUploading(true)
       const reader = new FileReader()
-      reader.onloadend = () => { setPreview(reader.result); onChange(reader.result) }
+      reader.onloadend = async () => {
+        const base64 = reader.result
+        setPreview(base64)
+        // Upload to Firebase Storage
+        const path = `${folder}/${Date.now()}_${file.name}`
+        const url = await uploadImage(base64, path)
+        if (url) {
+          onChange(url)
+        } else {
+          // Fallback to base64 if upload fails
+          onChange(base64)
+        }
+        setUploading(false)
+      }
       reader.readAsDataURL(file)
     }
   }
@@ -19,7 +35,9 @@ function ImageUpload({ value, onChange, label }) {
     <div>
       <label className="block text-xs font-semibold text-primary mb-1">{label}</label>
       <div onClick={() => fileRef.current.click()} className="border-2 border-dashed border-accent rounded-xl p-3 text-center cursor-pointer hover:border-primary transition-colors">
-        {preview ? (
+        {uploading ? (
+          <div className="text-muted text-sm">⏳ Uploading...</div>
+        ) : preview ? (
           <img src={preview} alt="Preview" className="max-h-32 mx-auto rounded-lg object-cover" />
         ) : (
           <div className="text-muted text-sm"><Upload size={24} className="mx-auto mb-1" />Klik untuk upload</div>
@@ -50,7 +68,7 @@ function EditPropertyModal({ prop, onSave, onClose }) {
           <div><label className="block text-xs font-semibold text-primary mb-1">Description</label>
             <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={3}
               className="w-full border-2 border-accent rounded-xl px-4 py-2.5 text-sm focus:border-primary focus:outline-none resize-none" /></div>
-          <ImageUpload value={form.image} onChange={v => setForm(p => ({ ...p, image: v }))} label="Gambar Property" />
+          <ImageUpload value={form.image} onChange={v => setForm(p => ({ ...p, image: v }))} label="Gambar Property" folder="properties" />
         </div>
         <button onClick={() => onSave(form)} className="btn-primary w-full mt-4 flex items-center justify-center gap-2"><Save size={18} /> Simpan</button>
       </div>
@@ -108,7 +126,7 @@ function EditRoomModal({ room, onSave, onClose }) {
           <div><label className="block text-xs font-semibold text-primary mb-1">Description</label>
             <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={2}
               className="w-full border-2 border-accent rounded-xl px-4 py-2.5 text-sm focus:border-primary focus:outline-none resize-none" /></div>
-          <ImageUpload value={form.image} onChange={v => setForm(p => ({ ...p, image: v }))} label="Gambar Bilik" />
+          <ImageUpload value={form.image} onChange={v => setForm(p => ({ ...p, image: v }))} label="Gambar Bilik" folder="rooms" />
           <div><label className="block text-xs font-semibold text-primary mb-2">Fasiliti</label>
             <div className="flex flex-wrap gap-2">
               {FACILITIES_LIST.map(f => (

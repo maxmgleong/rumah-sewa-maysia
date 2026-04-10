@@ -8,6 +8,7 @@ import RoomDetail from './components/RoomDetail'
 import BookingForm from './components/BookingForm'
 import SuccessPage from './components/SuccessPage'
 import AdminPanel from './components/AdminPanel'
+import { savePropertiesToCloud, getPropertiesFromCloud, saveTenantsToCloud, getTenantsFromCloud } from './firebase'
 
 const STORAGE_KEY = 'rental_properties_v2'
 const TENANTS_KEY = 'rental_tenants_v2'
@@ -19,27 +20,66 @@ export default function App() {
   const [selectedProp, setSelectedProp] = useState(null)
   const [selectedRoom, setSelectedRoom] = useState(null)
   const [tenants, setTenants] = useState([])
+  const [loading, setLoading] = useState(true)
 
+  // Load data on mount
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved) {
-      setProperties(JSON.parse(saved))
-    } else {
-      setProperties(INITIAL_PROPERTIES)
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PROPERTIES))
+    async function loadData() {
+      try {
+        // Try to get from cloud first
+        const cloudProperties = await getPropertiesFromCloud()
+        const cloudTenants = await getTenantsFromCloud()
+        
+        if (cloudProperties && cloudProperties.length > 0) {
+          setProperties(cloudProperties)
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(cloudProperties))
+        } else {
+          // Use local data if cloud is empty
+          const saved = localStorage.getItem(STORAGE_KEY)
+          if (saved) {
+            setProperties(JSON.parse(saved))
+          } else {
+            setProperties(INITIAL_PROPERTIES)
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PROPERTIES))
+          }
+        }
+        
+        if (cloudTenants && cloudTenants.length > 0) {
+          setTenants(cloudTenants)
+          localStorage.setItem(TENANTS_KEY, JSON.stringify(cloudTenants))
+        } else {
+          const savedTenants = localStorage.getItem(TENANTS_KEY)
+          if (savedTenants) setTenants(JSON.parse(savedTenants))
+        }
+      } catch (error) {
+        console.error("Error loading data:", error)
+        // Fallback to localStorage
+        const saved = localStorage.getItem(STORAGE_KEY)
+        if (saved) {
+          setProperties(JSON.parse(saved))
+        } else {
+          setProperties(INITIAL_PROPERTIES)
+        }
+        const savedTenants = localStorage.getItem(TENANTS_KEY)
+        if (savedTenants) setTenants(JSON.parse(savedTenants))
+      }
+      setLoading(false)
     }
-    const savedTenants = localStorage.getItem(TENANTS_KEY)
-    if (savedTenants) setTenants(JSON.parse(savedTenants))
+    loadData()
   }, [])
 
   function saveProperties(props) {
     setProperties(props)
     localStorage.setItem(STORAGE_KEY, JSON.stringify(props))
+    // Save to cloud
+    savePropertiesToCloud(props)
   }
 
   function saveTenants(newTenants) {
     setTenants(newTenants)
     localStorage.setItem(TENANTS_KEY, JSON.stringify(newTenants))
+    // Save to cloud
+    saveTenantsToCloud(newTenants)
   }
 
   function getFilteredProperties() {
@@ -115,6 +155,17 @@ export default function App() {
   function handleUpdateTenant(updatedTenant) {
     const updated = tenants.map(t => t.appliedAt === updatedTenant.appliedAt && t.roomId === updatedTenant.roomId ? updatedTenant : t)
     saveTenants(updated)
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-accent flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin text-4xl mb-4">⏳</div>
+          <p className="text-primary font-semibold">Loading...</p>
+        </div>
+      </div>
+    )
   }
 
   const totalBeds = properties.reduce((a, p) => a + p.rooms.reduce((b, r) => b + r.beds.length, 0), 0)
