@@ -20,7 +20,7 @@ jobs:
       - name: Install & Build
         run: |
           npm install
-          npm run build --ignore-scripts
+          node ./node_modules/vite/bin/vite.js build
       
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
