@@ -9,8 +9,10 @@ import BookingForm from './components/BookingForm'
 import SuccessPage from './components/SuccessPage'
 import Dashboard from './components/Dashboard'
 import AdminPanel from './components/AdminPanel'
+import TenantList from './components/TenantList'
 
 const STORAGE_KEY = 'rental_properties_v2'
+const TENANTS_KEY = 'rental_tenants_v2'
 
 export default function App() {
   const [view, setView] = useState('rooms')
@@ -28,13 +30,18 @@ export default function App() {
       setProperties(INITIAL_PROPERTIES)
       localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PROPERTIES))
     }
-    const savedTenants = localStorage.getItem('rental_tenants')
+    const savedTenants = localStorage.getItem(TENANTS_KEY)
     if (savedTenants) setTenants(JSON.parse(savedTenants))
   }, [])
 
   function saveProperties(props) {
     setProperties(props)
     localStorage.setItem(STORAGE_KEY, JSON.stringify(props))
+  }
+
+  function saveTenants(newTenants) {
+    setTenants(newTenants)
+    localStorage.setItem(TENANTS_KEY, JSON.stringify(newTenants))
   }
 
   function getFilteredProperties() {
@@ -61,23 +68,57 @@ export default function App() {
   }
 
   function handleSubmit(tenantData) {
-    const newTenant = { ...tenantData, roomId: selectedRoom.id, propId: selectedProp.id, appliedAt: new Date().toISOString() }
+    const newTenant = {
+      ...tenantData,
+      roomId: selectedRoom.id,
+      propId: selectedProp.id,
+      appliedAt: new Date().toISOString(),
+      status: 'pending', // pending, confirmed
+      rentAmount: selectedRoom.price,
+      confirmedAt: null,
+      nextPaymentDate: null
+    }
     const updated = [...tenants, newTenant]
-    setTenants(updated)
-    localStorage.setItem('rental_tenants', JSON.stringify(updated))
+    saveTenants(updated)
     setView('success')
   }
 
-  function handleConfirm(propId, roomId) {
+  function handleConfirm(tenantData) {
+    // Find the tenant and update with confirmation info
+    const tarikhMasuk = tenantData.tarikhMasuk
+    const masukDate = new Date(tarikhMasuk)
+    const nextPayment = new Date(masukDate)
+    nextPayment.setMonth(nextPayment.getMonth() + 1)
+
+    const updatedTenants = tenants.map(t => {
+      if (t.appliedAt === tenantData.appliedAt && t.roomId === tenantData.roomId) {
+        return {
+          ...t,
+          status: 'confirmed',
+          confirmedAt: new Date().toISOString(),
+          nextPaymentDate: nextPayment.toISOString(),
+          rentAmount: tenantData.rentAmount || t.rentAmount
+        }
+      }
+      return t
+    })
+    saveTenants(updatedTenants)
+
+    // Also update room status
     const updatedProps = properties.map(p => {
-      if (p.id !== propId) return p
-      return { ...p, rooms: p.rooms.map(r => r.id === roomId ? { ...r, status: 'ditempah' } : r) }
+      if (p.id !== tenantData.propId) return p
+      return { ...p, rooms: p.rooms.map(r => r.id === tenantData.roomId ? { ...r, status: 'ditempah' } : r) }
     })
     saveProperties(updatedProps)
     if (selectedProp) {
       const updated = updatedProps.find(p => p.id === selectedProp.id)
       if (updated) setSelectedProp(updated)
     }
+  }
+
+  function handleUpdateTenant(updatedTenant) {
+    const updated = tenants.map(t => t.appliedAt === updatedTenant.appliedAt && t.roomId === updatedTenant.roomId ? updatedTenant : t)
+    saveTenants(updated)
   }
 
   const totalBeds = properties.reduce((a, p) => a + p.rooms.reduce((b, r) => b + r.beds.length, 0), 0)
@@ -112,7 +153,10 @@ export default function App() {
         <Dashboard tenants={tenants} properties={properties} onBack={() => setView('rooms')} onConfirm={handleConfirm} />
       )}
       {view === 'admin' && (
-        <AdminPanel properties={properties} onSave={saveProperties} onBack={() => setView('rooms')} />
+        <AdminPanel properties={properties} onSave={saveProperties} onBack={() => setView('rooms')} onTenantList={() => setView('tenantList')} />
+      )}
+      {view === 'tenantList' && (
+        <TenantList tenants={tenants} properties={properties} onBack={() => setView('admin')} onUpdateTenant={handleUpdateTenant} />
       )}
     </div>
   )

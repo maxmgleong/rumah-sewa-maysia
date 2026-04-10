@@ -140,7 +140,7 @@ function EditRoomModal({ room, onSave, onClose }) {
   )
 }
 
-export default function AdminPanel({ properties, onSave, onBack }) {
+export default function AdminPanel({ properties, onSave, onBack, onTenantList }) {
   const [editProp, setEditProp] = useState(null)
   const [editRoom, setEditRoom] = useState(null)
 
@@ -185,6 +185,9 @@ export default function AdminPanel({ properties, onSave, onBack }) {
           <button onClick={onBack} className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
             <ArrowLeft size={20} className="text-white" /></button>
           <h1 className="text-white text-lg font-bold">🏠 Edit Properties</h1>
+          <button onClick={onTenantList} className="ml-auto bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-xl text-sm font-semibold flex items-center gap-1">
+            📋 Senarai Penyewa
+          </button>
         </div>
         <div className="grid grid-cols-3 gap-2">
           <div className="bg-white/15 rounded-2xl p-3 text-center"><p className="text-white/80 text-xs">Properties</p><p className="text-white text-2xl font-bold">{properties.length}</p></div>
