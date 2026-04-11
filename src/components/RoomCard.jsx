@@ -7,13 +7,11 @@ export default function RoomCard({ room, onBook }) {
   const availableBeds = room.beds.filter(b => !b.occupied)
   const allOccupied = availableBeds.length === 0
 
-  // Get facility icon
   function getFacilityIcon(f) {
     const Icon = FAC[f]
     return Icon ? <Icon size={13} className="text-primary" /> : <span className="text-xs">✨</span>
   }
 
-  // Format facility name
   function formatFacilityName(f) {
     if (FAC_LABEL[f]) return FAC_LABEL[f]
     return f.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
@@ -34,17 +32,26 @@ export default function RoomCard({ room, onBook }) {
         </div>
       </div>
       <div className="p-4">
-        <h3 className="font-bold text-primary text-base mb-1">{room.name}</h3>
-        <p className="text-xs text-gray-500 mb-3" style={{ whiteSpace: 'pre-wrap' }}>{room.description}</p>
+        <h3 className="font-bold text-primary text-base mb-2">{room.name}</h3>
         
-        {/* Individual beds status - Katil availability */}
+        {/* Description with proper formatting */}
+        {room.description && (
+          <div className="bg-accent rounded-xl p-3 mb-3">
+            <p className="text-xs text-gray-700 leading-relaxed" style={{ whiteSpace: 'pre-wrap' }}>{room.description}</p>
+          </div>
+        )}
+        
+        {/* Individual beds status */}
         <div className="mb-3">
-          <p className="text-xs text-muted mb-2">Katil:</p>
-          <div className="flex flex-wrap gap-1">
+          <p className="text-xs font-semibold text-primary mb-2">🛏️ Katil:</p>
+          <div className="flex flex-col gap-1">
             {room.beds.map((bed) => (
-              <div key={bed.id} className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium ${bed.occupied ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
-                <Bed size={10} />
-                {bed.name}: RM {bed.price || room.price} {bed.occupied ? '(Penuh)' : '(Tersedia)'}
+              <div key={bed.id} className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium ${bed.occupied ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-700'}`}>
+                <span className="flex items-center gap-1">
+                  <Bed size={12} />
+                  {bed.name}
+                </span>
+                <span className="font-bold">RM {bed.price || room.price}/bulan</span>
               </div>
             ))}
           </div>
@@ -53,9 +60,9 @@ export default function RoomCard({ room, onBook }) {
         {/* Facilities */}
         <div className="flex flex-wrap gap-2 mb-3">
           {room.facilities.map(f => (
-            <div key={f} className="flex items-center gap-1 bg-accent px-2 py-1 rounded-lg">
+            <div key={f} className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-lg">
               {getFacilityIcon(f)}
-              <span className="text-xs text-primary font-medium">{formatFacilityName(f)}</span>
+              <span className="text-xs text-blue-700 font-medium">{formatFacilityName(f)}</span>
             </div>
           ))}
         </div>

@@ -21,10 +21,13 @@ export default function PropertyDetail({ property, onBack, onRoomClick }) {
       <div className="px-4 -mt-6 relative z-10">
         <div className="bg-white rounded-3xl card-shadow p-5 mb-4">
           <h2 className="text-lg font-bold text-primary mb-1">{property.name}</h2>
-          <p className="text-muted text-sm mb-3">{property.location}</p>
-          <p className="text-sm text-gray-600 leading-relaxed" style={{ whiteSpace: 'pre-wrap' }}>{property.description}</p>
+          <p className="text-muted text-sm mb-3">📍 {property.location}</p>
+          <div className="bg-accent rounded-xl p-3">
+            <p className="text-xs font-semibold text-primary mb-1">Deskripsi:</p>
+            <p className="text-sm text-gray-700 leading-relaxed" style={{ whiteSpace: 'pre-wrap' }}>{property.description}</p>
+          </div>
         </div>
-        <h3 className="text-sm font-bold text-muted uppercase tracking-wide mb-3">{property.rooms.length} Bilik Tersedia</h3>
+        <h3 className="text-sm font-bold text-muted uppercase tracking-wide mb-3">🏠 {property.rooms.length} Bilik Tersedia</h3>
         <div className="space-y-3 pb-6">
           {property.rooms.map(room => {
             const kosong = room.beds.filter(b => !b.occupied).length
@@ -35,22 +38,26 @@ export default function PropertyDetail({ property, onBack, onRoomClick }) {
                     onError={e => e.target.src = 'https://placehold.co/200x200/e8f5f1/4A9B8C?text=Room'} />
                   <div className="flex-1 p-3">
                     <div className="flex items-start justify-between">
-                      <div>
+                      <div className="flex-1">
                         <h4 className="font-bold text-primary text-sm">{room.name}</h4>
-                        <p className="text-xs text-muted mt-0.5" style={{ whiteSpace: 'pre-wrap' }}>{room.description}</p>
+                        <p className="text-xs text-green-600 font-semibold mt-1">RM {room.price}/bulan</p>
                       </div>
-                      <div className="text-right ml-2">
-                        <p className="text-primary font-bold">RM {room.price}</p>
-                        <p className="text-muted text-xs">sebulan</p>
-                      </div>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${kosong > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        {kosong > 0 ? `🟢 ${kosong} katil` : '🔴 Penuh'}
+                      </span>
                     </div>
                     
+                    {/* Description */}
+                    {room.description && (
+                      <p className="text-xs text-gray-500 mt-2 leading-relaxed" style={{ whiteSpace: 'pre-wrap' }}>{room.description}</p>
+                    )}
+
                     {/* Facilities */}
                     <div className="flex flex-wrap gap-1 mt-2">
                       {room.facilities.map(f => {
                         const Icon = ICONS[f]
                         return (
-                          <span key={f} className="flex items-center gap-1 bg-accent px-2 py-0.5 rounded text-xs text-primary">
+                          <span key={f} className="flex items-center gap-1 bg-blue-50 px-2 py-0.5 rounded text-xs text-blue-700">
                             {Icon ? <Icon size={10} /> : <span>✨</span>}
                             {formatFacilityName(f)}
                           </span>
@@ -58,16 +65,11 @@ export default function PropertyDetail({ property, onBack, onRoomClick }) {
                       })}
                     </div>
 
-                    <div className="flex items-center justify-between mt-2">
-                      <div />
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${kosong > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                        {kosong > 0 ? `🟢 ${kosong} katil kosong` : '🔴 Penuh'}
-                      </span>
-                    </div>
-                    <div className="mt-2 flex flex-wrap gap-1">
+                    {/* Beds */}
+                    <div className="flex flex-wrap gap-1 mt-2">
                       {room.beds.map(b => (
                         <span key={b.id} className={`px-2 py-1 rounded-lg text-xs font-medium ${b.occupied ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>
-                          🛏️ {b.name}: RM {b.price || room.price} {b.occupied ? '(Penuh)' : '(Tersedia)'}
+                          🛏️ {b.name}: RM {b.price || room.price}
                         </span>
                       ))}
                     </div>

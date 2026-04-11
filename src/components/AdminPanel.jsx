@@ -73,8 +73,8 @@ function EditPropertyModal({ prop, onSave, onClose }) {
             <input value={form.location} onChange={e => setForm(p => ({ ...p, location: e.target.value }))}
               className="w-full border-2 border-accent rounded-xl px-4 py-2.5 text-sm focus:border-primary focus:outline-none" /></div>
           <div><label className="block text-xs font-semibold text-primary mb-1">Description</label>
-            <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={3}
-              className="w-full border-2 border-accent rounded-xl px-4 py-2.5 text-sm focus:border-primary focus:outline-none resize-none" /></div>
+            <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={5}
+              className="w-full border-2 border-accent rounded-xl px-4 py-2.5 text-sm focus:border-primary focus:outline-none resize-none" placeholder="Masukkan deskripsi..." /></div>
           <ImageUpload value={form.image} onChange={v => setForm(p => ({ ...p, image: v }))} label="Gambar Property" folder="properties" />
         </div>
         <button onClick={() => onSave(form)} className="btn-primary w-full mt-4 flex items-center justify-center gap-2"><Save size={18} /> Simpan</button>
@@ -142,8 +142,8 @@ function EditRoomModal({ room, onSave, onClose }) {
               className="w-full border-2 border-accent rounded-xl px-4 py-2.5 text-sm focus:border-primary focus:outline-none">
               <option value="kosong">🟢 Kosong</option><option value="ditempah">🔴 Telah Ditempah</option></select></div>
           <div><label className="block text-xs font-semibold text-primary mb-1">Description</label>
-            <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={2}
-              className="w-full border-2 border-accent rounded-xl px-4 py-2.5 text-sm focus:border-primary focus:outline-none resize-none" /></div>
+            <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={5}
+              className="w-full border-2 border-accent rounded-xl px-4 py-2.5 text-sm focus:border-primary focus:outline-none resize-none" placeholder="Masukkan deskripsi..." /></div>
           <ImageUpload value={form.image} onChange={v => setForm(p => ({ ...p, image: v }))} label="Gambar Bilik" folder="rooms" />
           <div><label className="block text-xs font-semibold text-primary mb-2">Fasiliti</label>
             <div className="flex flex-wrap gap-2">
