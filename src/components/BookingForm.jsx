@@ -20,7 +20,8 @@ export default function BookingForm({ room, property, onBack, onSubmit }) {
   const selectedBed = room.beds.find(b => b.id === form.selectedBedId)
   const bedPrice = selectedBed?.price || room.price || 0
   const bookingFee = 100
-  const fullPayment = bedPrice
+  // Full Payment = Deposit(1 month) + Utility(RM50) + Advance(1 month) + Agreement(RM100)
+  const fullPayment = (bedPrice * 2) + 50 + 100
   const amountDue = form.paymentMethod === 'booking_fee' ? bookingFee : fullPayment
 
   function handleChange(e) {
@@ -173,14 +174,25 @@ export default function BookingForm({ room, property, onBack, onSubmit }) {
                 className={`p-3 rounded-xl border-2 text-left transition-colors ${form.paymentMethod === 'booking_fee' ? 'border-primary bg-accent' : 'border-accent'}`}>
                 <p className="text-sm font-semibold text-primary">📌 Booking Fee</p>
                 <p className="text-lg font-bold text-primary">RM {bookingFee}</p>
+                <p className="text-xs text-muted">Reservasi sahaja</p>
               </button>
               <button type="button" onClick={() => handlePaymentMethodChange('full_payment')}
                 className={`p-3 rounded-xl border-2 text-left transition-colors ${form.paymentMethod === 'full_payment' ? 'border-primary bg-accent' : 'border-accent'}`}>
                 <p className="text-sm font-semibold text-primary">💰 Bayaran Penuh</p>
                 <p className="text-lg font-bold text-primary">RM {fullPayment}</p>
+                <p className="text-xs text-muted">Termasuk semua</p>
               </button>
             </div>
-            <p className="text-xs text-muted mt-2">* Bayaran akan dijelaskan semasa bertemu di lokasi</p>
+            {form.paymentMethod === 'full_payment' && (
+              <div className="bg-accent rounded-xl p-3 mt-2 text-xs">
+                <p className="font-semibold text-primary">Breakdown Bayaran Penuh:</p>
+                <p>• Deposit Sewa (1 bulan): RM {bedPrice}</p>
+                <p>• Deposit Utility: RM 50</p>
+                <p>• Sewa Advanced (1 bulan): RM {bedPrice}</p>
+                <p>• Agreement Tenancy: RM 100</p>
+                <p className="font-bold text-primary mt-1">Total: RM {fullPayment}</p>
+              </div>
+            )}
           </div>
 
           {/* Payment Receipt Upload */}
