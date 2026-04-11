@@ -22,7 +22,7 @@ export default function PropertyDetail({ property, onBack, onRoomClick }) {
         <div className="bg-white rounded-3xl card-shadow p-5 mb-4">
           <h2 className="text-lg font-bold text-primary mb-1">{property.name}</h2>
           <p className="text-muted text-sm mb-3">{property.location}</p>
-          <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{property.description}</p>
+          <p className="text-sm text-gray-600 leading-relaxed" style={{ whiteSpace: 'pre-wrap' }}>{property.description}</p>
         </div>
         <h3 className="text-sm font-bold text-muted uppercase tracking-wide mb-3">{property.rooms.length} Bilik Tersedia</h3>
         <div className="space-y-3 pb-6">
@@ -37,7 +37,7 @@ export default function PropertyDetail({ property, onBack, onRoomClick }) {
                     <div className="flex items-start justify-between">
                       <div>
                         <h4 className="font-bold text-primary text-sm">{room.name}</h4>
-                        <p className="text-xs text-muted mt-0.5 line-clamp-2 whitespace-pre-wrap">{room.description}</p>
+                        <p className="text-xs text-muted mt-0.5" style={{ whiteSpace: 'pre-wrap' }}>{room.description}</p>
                       </div>
                       <div className="text-right ml-2">
                         <p className="text-primary font-bold">RM {room.price}</p>

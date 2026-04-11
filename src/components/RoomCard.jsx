@@ -35,7 +35,7 @@ export default function RoomCard({ room, onBook }) {
       </div>
       <div className="p-4">
         <h3 className="font-bold text-primary text-base mb-1">{room.name}</h3>
-        <p className="text-xs text-gray-500 mb-3 whitespace-pre-wrap">{room.description}</p>
+        <p className="text-xs text-gray-500 mb-3" style={{ whiteSpace: 'pre-wrap' }}>{room.description}</p>
         
         {/* Individual beds status - Katil availability */}
         <div className="mb-3">
