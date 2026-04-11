@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react'
 import { ArrowLeft, Edit2, Trash2, Plus, Save, X, Upload } from 'lucide-react'
-import { FACILITIES_LIST } from '../data/properties'
 
 function ImageUpload({ value, onChange, label }) {
   const [preview, setPreview] = useState(value || null)
@@ -102,7 +101,6 @@ function EditRoomModal({ room, onSave, onClose }) {
 export default function AdminPanel({ properties, onSave, onBack, tenants, onUpdateTenant, onConfirm }) {
   const [editProp, setEditProp] = useState(null)
   const [editRoom, setEditRoom] = useState(null)
-  const [expandedProp, setExpandedProp] = useState(null)
   const [tab, setTab] = useState('properties')
   const pendingTenants = tenants.filter(t => t.status === 'pending')
   const confirmedTenants = tenants.filter(t => t.status === 'confirmed')
@@ -115,7 +113,6 @@ export default function AdminPanel({ properties, onSave, onBack, tenants, onUpda
 
   function saveRoom(updated) {
     const newProps = properties.map(p => {
-      if (p.id !== expandedProp.id) return p
       return { ...p, rooms: p.rooms.map(r => r.id === updated.id ? updated : r) }
     })
     onSave(newProps)
@@ -166,6 +163,7 @@ export default function AdminPanel({ properties, onSave, onBack, tenants, onUpda
               <div className="bg-white rounded-2xl p-3 text-center"><p className="text-muted text-xs">Bilik</p><p className="text-primary text-2xl font-bold">{properties.reduce((a, p) => a + p.rooms.length, 0)}</p></div>
               <div className="bg-white rounded-2xl p-3 text-center"><p className="text-muted text-xs">Pendapatan</p><p className="text-green-600 text-2xl font-bold">RM{totalMonthlyRent}</p></div>
             </div>
+            
             {properties.map(prop => (
               <div key={prop.id} className="bg-white rounded-3xl card-shadow mt-4 overflow-hidden">
                 <div className="p-4">
@@ -178,49 +176,45 @@ export default function AdminPanel({ properties, onSave, onBack, tenants, onUpda
                       <p className="text-muted text-xs mt-1">{prop.rooms.length} bilik</p>
                     </div>
                     <div className="flex gap-1">
-                      <button onClick={() => setExpandedProp(expandedProp?.id === prop.id ? null : prop)} className="p-2 bg-primary/10 text-primary rounded-lg text-xs">
-                        {expandedProp?.id === prop.id ? 'Tutup' : 'Buka'}
-                      </button>
                       <button onClick={() => setEditProp(prop)} className="p-2 text-primary hover:bg-accent rounded-lg"><Edit2 size={16} /></button>
                       <button onClick={() => deleteProperty(prop.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
                     </div>
                   </div>
                 </div>
                 
-                {expandedProp?.id === prop.id && (
-                  <div className="border-t bg-accent/30 p-4">
-                    <div className="flex justify-between items-center mb-3">
-                      <h4 className="font-bold text-primary text-sm">📋 Senarai Bilik</h4>
-                      <button onClick={() => addRoom(prop)} className="text-xs bg-green-500 text-white px-3 py-1.5 rounded-lg flex items-center gap-1"><Plus size={12} /> Tambah</button>
-                    </div>
-                    {prop.rooms.length === 0 ? (
-                      <p className="text-muted text-sm text-center py-4">Tiada bilik lagi. Tambah bilik baru!</p>
-                    ) : (
-                      prop.rooms.map(room => (
-                        <div key={room.id} className="bg-white rounded-xl p-3 mb-2">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <h5 className="font-bold text-primary text-sm">{room.name}</h5>
-                              <p className="text-green-600 font-bold text-sm">RM{room.price}/bulan</p>
-                              <p className="text-muted text-xs mt-1">{room.beds.length} katil</p>
-                              <div className="flex gap-1 mt-1 flex-wrap">
-                                {room.beds.map(b => (
-                                  <span key={b.id} className={`text-xs px-1.5 py-0.5 rounded ${b.occupied ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>{b.name}</span>
-                                ))}
-                              </div>
-                            </div>
-                            <div className="flex gap-1">
-                              <button onClick={() => setEditRoom(room)} className="p-1.5 text-primary bg-accent rounded-lg"><Edit2 size={14} /></button>
-                              <button onClick={() => deleteRoom(prop.id, room.id)} className="p-1.5 text-red-500 bg-red-50 rounded-lg"><Trash2 size={14} /></button>
+                <div className="border-t bg-accent/30 p-4">
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="font-bold text-primary text-sm">📋 Bilik & Katil</h4>
+                    <button onClick={() => addRoom(prop)} className="text-xs bg-green-500 text-white px-3 py-1.5 rounded-lg flex items-center gap-1"><Plus size={12} /> Tambah</button>
+                  </div>
+                  {prop.rooms.length === 0 ? (
+                    <p className="text-muted text-sm text-center py-4">Tiada bilik lagi!</p>
+                  ) : (
+                    prop.rooms.map(room => (
+                      <div key={room.id} className="bg-white rounded-xl p-3 mb-2">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h5 className="font-bold text-primary text-sm">{room.name}</h5>
+                            <p className="text-green-600 font-bold text-sm">RM{room.price}/bulan</p>
+                            <p className="text-muted text-xs mt-1">{room.beds.length} katil</p>
+                            <div className="flex gap-1 mt-1 flex-wrap">
+                              {room.beds.map(b => (
+                                <span key={b.id} className={`text-xs px-1.5 py-0.5 rounded ${b.occupied ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>{b.name}</span>
+                              ))}
                             </div>
                           </div>
+                          <div className="flex gap-1">
+                            <button onClick={() => setEditRoom(room)} className="p-1.5 text-primary bg-accent rounded-lg"><Edit2 size={14} /></button>
+                            <button onClick={() => deleteRoom(prop.id, room.id)} className="p-1.5 text-red-500 bg-red-50 rounded-lg"><Trash2 size={14} /></button>
+                          </div>
                         </div>
-                      ))
-                    )}
-                  </div>
-                )}
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
             ))}
+            
             <button onClick={() => {
               const newProp = { id: Date.now(), name: 'Property Baru', location: 'Kuala Lumpur', image: 'https://placehold.co/600x400/e8f5f1/4A9B8C?text=Property', description: '', rooms: [] }
               onSave([...properties, newProp])
