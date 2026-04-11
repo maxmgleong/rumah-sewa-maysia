@@ -1,5 +1,5 @@
-const MASTER_KEY = '$2a$10$P9mAhXm4YO1JZH8nEUE4Veh9niBY5RH4iBojSxkiCF.JS243MjqRm'
-const BIN_ID = '69d9b149856a6821891f4e84'
+const MASTER_KEY = '$2a$10$3HP31Mq0mqk0yAP.lLnlcuX0um7lcgHJe1Oww/7FbU.RnzzqZmGre'
+const BIN_ID = '69d9d993aaba882197e815db'
 const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`
 
 export async function savePropertiesToCloud(properties) {
