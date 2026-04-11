@@ -19,7 +19,6 @@ export default function RoomCard({ room, onBook }) {
 
   return (
     <div className="bg-white rounded-3xl overflow-hidden card-shadow">
-      {/* Full width image */}
       <div className="relative">
         <img src={room.image} alt={room.name} className="w-full h-48 object-cover"
           onError={e => e.target.src = 'https://placehold.co/600x300/e8f5f1/4A9B8C?text=Bilik'} />
@@ -33,11 +32,9 @@ export default function RoomCard({ room, onBook }) {
         </div>
       </div>
       
-      {/* Room Name */}
       <div className="p-4">
         <h3 className="font-bold text-primary text-lg mb-3">{room.name}</h3>
         
-        {/* Description - Clear and readable */}
         {room.description && (
           <div className="bg-accent rounded-xl p-4 mb-4">
             <p className="text-sm font-semibold text-primary mb-2">📝 Deskripsi:</p>
@@ -45,7 +42,6 @@ export default function RoomCard({ room, onBook }) {
           </div>
         )}
         
-        {/* Beds - Clear pricing */}
         <div className="mb-4">
           <p className="text-sm font-semibold text-primary mb-2">🛏️ Pilihan Katil:</p>
           <div className="space-y-2">
@@ -62,7 +58,6 @@ export default function RoomCard({ room, onBook }) {
           </div>
         </div>
 
-        {/* Facilities */}
         <div className="mb-4">
           <p className="text-sm font-semibold text-primary mb-2">✨ Fasiliti:</p>
           <div className="flex flex-wrap gap-2">

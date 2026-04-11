@@ -1,7 +1,62 @@
 import { useState, useRef } from 'react'
-import { ArrowLeft, Edit2, Trash2, Plus, Save, X, Upload, Calendar, DollarSign, Users, CheckCircle, Phone, Image } from 'lucide-react'
+import { ArrowLeft, Edit2, Trash2, Plus, Save, X, Upload, Calendar, DollarSign, Users, CheckCircle, Phone, Image, Lock } from 'lucide-react'
 import { FACILITIES_LIST } from '../data/properties'
 import { uploadImage } from '../imgbb'
+
+function ChangePasswordModal({ onClose }) {
+  const [oldPassword, setOldPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
+
+  function handleSave() {
+    if (oldPassword !== '888888') {
+      setError('Password lama salah!')
+      return
+    }
+    if (newPassword.length < 4) {
+      setError('Password baru最少4个字符!')
+      return
+    }
+    // Save new password to localStorage (in real app, should hash and store securely)
+    localStorage.setItem('admin_password', newPassword)
+    setSuccess(true)
+    setTimeout(() => {
+      onClose()
+    }, 1500)
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white rounded-3xl max-w-sm w-full p-5" onClick={e => e.stopPropagation()}>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-bold text-primary flex items-center gap-2"><Lock size={20} /> Tukar Password</h2>
+          <button onClick={onClose} className="text-muted"><X size={20} /></button>
+        </div>
+        {success ? (
+          <div className="text-center py-4">
+            <p className="text-green-600 font-bold">✅ Password berjaya ditukar!</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <div>
+              <label className="block text-xs font-semibold text-primary mb-1">Password Lama</label>
+              <input type="password" value={oldPassword} onChange={e => setOldPassword(e.target.value)}
+                className="w-full border-2 border-accent rounded-xl px-4 py-2.5 text-sm focus:border-primary focus:outline-none" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-primary mb-1">Password Baru</label>
+              <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
+                className="w-full border-2 border-accent rounded-xl px-4 py-2.5 text-sm focus:border-primary focus:outline-none" placeholder="最少4个字符" />
+            </div>
+            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+            <button onClick={handleSave} className="btn-primary w-full mt-2">Simpan Password Baru</button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
 
 function ImageUpload({ value, onChange, label, folder }) {
   const [preview, setPreview] = useState(value || null)
@@ -377,11 +432,14 @@ export default function AdminPanel({ properties, onSave, onBack, tenants, onUpda
           </button>
           <button onClick={() => setTab('applications')}
             className={`flex-1 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition-colors ${tab === 'applications' ? 'bg-white text-primary' : 'bg-white/20 text-white'}`}>
-            📋 Permohonan {pendingTenants.length > 0 && `(${pendingTenants.length})`}
+            📋 Permohonan{pendingTenants.length > 0 && ` (${pendingTenants.length})`}
           </button>
           <button onClick={() => setTab('tenants')}
             className={`flex-1 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition-colors ${tab === 'tenants' ? 'bg-white text-primary' : 'bg-white/20 text-white'}`}>
             👥 Penyewa
+          </button>
+          <button onClick={() => setShowPasswordModal(true)} className="bg-white/20 hover:bg-white/30 text-white px-2 py-2.5 rounded-xl text-xs" title="Tukar Password">
+            🔒
           </button>
         </div>
       </div>
@@ -562,6 +620,7 @@ export default function AdminPanel({ properties, onSave, onBack, tenants, onUpda
       {editRoom && <EditRoomModal room={editRoom} onSave={saveRoom} onClose={() => setEditRoom(null)} />}
       {editTenant && <EditTenantModal tenant={editTenant} onSave={onUpdateTenant} onClose={() => setEditTenant(null)} />}
       {viewTenant && <ViewTenantModal tenant={viewTenant} onClose={() => setViewTenant(null)} />}
+      {showPasswordModal && <ChangePasswordModal onClose={() => setShowPasswordModal(false)} />}
     </div>
   )
 }

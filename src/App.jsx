@@ -8,10 +8,12 @@ import RoomDetail from './components/RoomDetail'
 import BookingForm from './components/BookingForm'
 import SuccessPage from './components/SuccessPage'
 import AdminPanel from './components/AdminPanel'
+import AdminLogin from './components/AdminLogin'
 import { savePropertiesToCloud, getPropertiesFromCloud, saveTenantsToCloud, getTenantsFromCloud } from './jsonbin'
 
 const STORAGE_KEY = 'rental_properties_v2'
 const TENANTS_KEY = 'rental_tenants_v2'
+const ADMIN_KEY = 'rental_admin_logged_in'
 
 export default function App() {
   const [view, setView] = useState('rooms')
@@ -21,6 +23,7 @@ export default function App() {
   const [selectedRoom, setSelectedRoom] = useState(null)
   const [tenants, setTenants] = useState([])
   const [loading, setLoading] = useState(true)
+  const [adminLoggedIn, setAdminLoggedIn] = useState(false)
 
   useEffect(() => {
     async function loadData() {
@@ -164,6 +167,11 @@ export default function App() {
     saveTenants(updated)
   }
 
+  function handleAdminLogin() {
+    setAdminLoggedIn(true)
+    setView('admin')
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-accent flex items-center justify-center">
@@ -182,7 +190,7 @@ export default function App() {
     <div className="min-h-screen bg-accent pb-8">
       {view === 'rooms' && (
         <>
-          <Header onAdmin={() => setView('admin')} kosongBeds={kosongBeds} totalBeds={totalBeds} />
+          <Header onAdmin={() => handleAdminLogin()} kosongBeds={kosongBeds} totalBeds={totalBeds} />
           <FilterTabs filter={filter} onFilterChange={setFilter} />
           <div className="px-4 space-y-4">
             {getFilteredProperties().map(prop => (
@@ -203,7 +211,7 @@ export default function App() {
       {view === 'success' && (
         <SuccessPage room={selectedRoom} property={selectedProp} onHome={() => { setView('rooms'); setSelectedRoom(null); setSelectedProp(null) }} />
       )}
-      {view === 'admin' && (
+      {view === 'admin' && adminLoggedIn && (
         <AdminPanel
           properties={properties}
           onSave={saveProperties}
@@ -212,6 +220,9 @@ export default function App() {
           onUpdateTenant={handleUpdateTenant}
           onConfirm={handleConfirm}
         />
+      )}
+      {view === 'admin' && !adminLoggedIn && (
+        <AdminLogin onLogin={handleAdminLogin} />
       )}
     </div>
   )
