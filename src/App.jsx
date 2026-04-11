@@ -8,7 +8,7 @@ import RoomDetail from './components/RoomDetail'
 import BookingForm from './components/BookingForm'
 import SuccessPage from './components/SuccessPage'
 import AdminPanel from './components/AdminPanel'
-import { savePropertiesToCloud, getPropertiesFromCloud, saveTenantsToCloud, getTenantsFromCloud } from './cloudflare'
+import { savePropertiesToCloud, getPropertiesFromCloud, saveTenantsToCloud, getTenantsFromCloud } from './jsonbin'
 
 const STORAGE_KEY = 'rental_properties_v2'
 const TENANTS_KEY = 'rental_tenants_v2'

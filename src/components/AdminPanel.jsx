@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { ArrowLeft, Edit2, Trash2, Plus, Save, X, Upload, Calendar, DollarSign, Users, CheckCircle, Phone, Image } from 'lucide-react'
 import { FACILITIES_LIST } from '../data/properties'
-import { uploadImage } from '../cloudflare'
+import { uploadImage } from '../jsonbin'
 
 function ImageUpload({ value, onChange, label, folder }) {
   const [preview, setPreview] = useState(value || null)
