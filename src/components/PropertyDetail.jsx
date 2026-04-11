@@ -50,10 +50,10 @@ export default function PropertyDetail({ property, onBack, onRoomClick }) {
                         {kosong > 0 ? `🟢 ${kosong} katil kosong` : '🔴 Penuh'}
                       </span>
                     </div>
-                    <div className="mt-1 text-xs text-muted">
+                    <div className="mt-2 flex flex-wrap gap-1">
                       {room.beds.map(b => (
-                        <span key={b.id} className={`mr-2 ${b.occupied ? 'line-through opacity-50' : 'text-green-600 font-medium'}`}>
-                          • {b.name} - RM {b.price || room.price} {b.occupied ? '(Penuh)' : '(Tersedia)'}
+                        <span key={b.id} className={`px-2 py-1 rounded-lg text-xs font-medium ${b.occupied ? 'bg-red-100 text-red-600 line-through' : 'bg-green-100 text-green-700'}`}>
+                          🛏️ {b.name}: RM {b.price || room.price}
                         </span>
                       ))}
                     </div>
