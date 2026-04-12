@@ -43,7 +43,7 @@ function ImageUpload({ value, onChange, label, folder }) {
       <label className="block text-xs font-semibold text-primary mb-1">{label}</label>
       <div onClick={() => fileRef.current.click()} className="border-2 border-dashed border-accent rounded-xl p-3 text-center cursor-pointer hover:border-primary transition-colors">
         {uploading ? (
-          <div className="text-muted text-sm">ΓÅ│ Uploading...</div>
+          <div className="text-muted text-sm">⚫ Uploading...</div>
         ) : preview ? (
           <img src={preview} alt="Preview" className="max-h-32 mx-auto rounded-lg object-cover" />
         ) : (
@@ -150,7 +150,7 @@ function EditRoomModal({ room, onSave, onClose }) {
               {FACILITIES_LIST.map(f => (
                 <button key={f} onClick={() => toggleFacility(f)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${form.facilities.includes(f) ? 'bg-primary text-white border-primary' : 'border-accent text-muted'}`}>
-                  {f === 'wifi' ? '≡ƒô╢' : f === 'ac' ? 'Γ¥ä∩╕Å' : f === 'peti_sejuk' ? '≡ƒºè' : '≡ƒÜù'} {f.charAt(0).toUpperCase() + f.slice(1)}
+                  {f === 'wifi' ? '≡ƒô╢' : f === 'ac' ? '❄️' : f === 'peti_sejuk' ? '🧊' : '🚗'} {f.charAt(0).toUpperCase() + f.slice(1)}
                 </button>
               ))}
             </div>
@@ -158,8 +158,8 @@ function EditRoomModal({ room, onSave, onClose }) {
             <div className="flex flex-wrap gap-2 mt-2">
               {form.facilities.filter(f => !FACILITIES_LIST.includes(f)).map(f => (
                 <span key={f} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-purple-100 text-purple-700 border border-purple-300 flex items-center gap-1">
-                  Γ£¿ {f.replace(/_/g, ' ')}
-                  <button onClick={() => toggleFacility(f)} className="ml-1 text-purple-500 hover:text-purple-700">├ù</button>
+                  ✨ {f.replace(/_/g, ' ')}
+                  <button onClick={() => toggleFacility(f)} className="ml-1 text-purple-500 hover:text-purple-700">×</button>
                 </span>
               ))}
             </div>
@@ -234,25 +234,25 @@ function EditTenantModal({ tenant, onSave, onClose }) {
             <p className="font-bold text-primary">{form.nama}</p>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-primary mb-1">≡ƒÆ░ Sewa (RM/sebulan)</label>
+            <label className="block text-xs font-semibold text-primary mb-1">💰 Sewa (RM/sebulan)</label>
             <input type="number" name="rentAmount" value={form.rentAmount || 0} onChange={handleChange}
               className="w-full border-2 border-accent rounded-xl px-4 py-2.5 text-sm focus:border-primary focus:outline-none" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-primary mb-1">≡ƒôà Tarikh Masuk</label>
+            <label className="block text-xs font-semibold text-primary mb-1">📅 Tarikh Masuk</label>
             <input type="date" name="tarikhMasuk" value={form.tarikhMasuk?.split('T')[0] || ''} onChange={handleDateChange}
               className="w-full border-2 border-accent rounded-xl px-4 py-2.5 text-sm focus:border-primary focus:outline-none" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-primary mb-1">≡ƒôà Tarikh Bayar Sewa Berikutnya</label>
+            <label className="block text-xs font-semibold text-primary mb-1">📅 Tarikh Bayar Sewa Berikutnya</label>
             <input type="date" name="nextPaymentDate" value={form.nextPaymentDate?.split('T')[0] || ''} onChange={handleChange}
               className="w-full border-2 border-accent rounded-xl px-4 py-2.5 text-sm focus:border-primary focus:outline-none" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-primary mb-1">≡ƒô¥ Status</label>
+            <label className="block text-xs font-semibold text-primary mb-1">📝 Status</label>
             <select name="status" value={form.status} onChange={handleChange}
               className="w-full border-2 border-accent rounded-xl px-4 py-2.5 text-sm focus:border-primary focus:outline-none">
-              <option value="pending">ΓÅ│ Menunggu</option>
+              <option value="pending">⚫ Menunggu</option>
               <option value="confirmed">Γ£à Disahkan</option>
               <option value="ended">≡ƒö┤ Tamat</option>
             </select>
@@ -411,21 +411,21 @@ export default function AdminPanel({ properties, onSave, onBack, tenants, onUpda
         <div className="flex items-center gap-3 mb-4">
           <button onClick={onBack} className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
             <ArrowLeft size={20} className="text-white" /></button>
-          <h1 className="text-white text-lg font-bold">≡ƒÅá Admin Panel</h1>
+          <h1 className="text-white text-lg font-bold">🏠 Admin Panel</h1>
         </div>
         {/* Tab Switcher */}
         <div className="flex gap-2">
           <button onClick={() => setTab('properties')}
             className={`flex-1 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition-colors ${tab === 'properties' ? 'bg-white text-primary' : 'bg-white/20 text-white'}`}>
-            ≡ƒÅá Properties
+            🏠 Properties
           </button>
           <button onClick={() => setTab('applications')}
             className={`flex-1 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition-colors ${tab === 'applications' ? 'bg-white text-primary' : 'bg-white/20 text-white'}`}>
-            ≡ƒôï Permohonan {pendingTenants.length > 0 && `(${pendingTenants.length})`}
+            📋 Permohonan {pendingTenants.length > 0 && `(${pendingTenants.length})`}
           </button>
           <button onClick={() => setTab('tenants')}
             className={`flex-1 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition-colors ${tab === 'tenants' ? 'bg-white text-primary' : 'bg-white/20 text-white'}`}>
-            ≡ƒæÑ Penyewa
+            👥 Penyewa
           </button>
         </div>
       </div>
@@ -491,7 +491,7 @@ export default function AdminPanel({ properties, onSave, onBack, tenants, onUpda
               <div className="bg-white rounded-2xl p-3 text-center shadow"><p className="text-muted text-xs">Pendapatan</p><p className="text-green-600 text-2xl font-bold">RM{totalMonthlyRent}</p></div>
             </div>
 
-            <h3 className="text-sm font-bold text-muted uppercase tracking-wide mt-4 mb-2">ΓÅ│ Menunggu Pengesahan ({pendingTenants.length})</h3>
+            <h3 className="text-sm font-bold text-muted uppercase tracking-wide mt-4 mb-2">⚫ Menunggu Pengesahan ({pendingTenants.length})</h3>
             {pendingTenants.length === 0 ? (
               <div className="bg-white rounded-3xl card-shadow p-8 text-center">
                 <p className="text-muted">Tiada permohonan baru.</p>
@@ -507,7 +507,7 @@ export default function AdminPanel({ properties, onSave, onBack, tenants, onUpda
                           <h3 className="font-bold text-primary">{tenant.nama}</h3>
                           <p className="text-xs text-muted">{propName} - {roomName}</p>
                           <p className="text-xs text-muted mt-1">≡ƒ¢Å {tenant.selectedBedName}</p>
-                          <p className="text-xs text-muted">≡ƒôà {tenant.tarikhMasuk || 'Tiada tarikh'}</p>
+                          <p className="text-xs text-muted">📅 {tenant.tarikhMasuk || 'Tiada tarikh'}</p>
                           <p className="text-xs text-muted">ΓÅ▒ {formatDate(tenant.appliedAt)}</p>
                           <div className="mt-2 flex gap-2">
                             <button onClick={() => setViewTenant(tenant)} className="flex items-center gap-1 text-xs text-primary border border-primary px-2 py-1 rounded-lg hover:bg-accent">
@@ -590,7 +590,7 @@ export default function AdminPanel({ properties, onSave, onBack, tenants, onUpda
                           </div>
                         </div>
                         <div className="mt-2 text-xs text-muted">
-                          <p>≡ƒôà Tarikh masuk: {formatDate(tenant.tarikhMasuk)}</p>
+                          <p>📅 Tarikh masuk: {formatDate(tenant.tarikhMasuk)}</p>
                           <p>≡ƒÆ╡ Bayar berikutnya: {formatDate(tenant.nextPaymentDate)}</p>
                         </div>
                       </div>
