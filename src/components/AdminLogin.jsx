@@ -23,7 +23,7 @@ export default function AdminLogin({ onLogin }) {
           <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
             <Lock size={32} className="text-white" />
           </div>
-          <h2 className="text-xl font-bold text-primary">Admin Login</h2>
+          <h2 className="text-xl font-bold text-primary">Angel Home Pro Admin</h2>
           <p className="text-muted text-sm mt-1">Masukkan password untuk akses</p>
         </div>
         

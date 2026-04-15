@@ -1,4 +1,4 @@
-import { User, Users, Download } from 'lucide-react'
+import { User, Users, Download, Home } from 'lucide-react'
 
 export default function Header({ onAdmin, kosongBeds, totalBeds, onInstall, showInstall }) {
   return (
@@ -6,7 +6,9 @@ export default function Header({ onAdmin, kosongBeds, totalBeds, onInstall, show
       <div className="flex items-center justify-between mb-4">
         <div>
           <p className="text-secondary text-sm">Selamat Datang!</p>
-          <h1 className="text-white text-xl font-bold">Bilik Sewa N9</h1>
+          <h1 className="text-white text-xl font-bold flex items-center gap-2">
+            <Home size={24} /> Angel Home Pro
+          </h1>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={onAdmin} className="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-xl text-sm font-medium flex items-center gap-1">

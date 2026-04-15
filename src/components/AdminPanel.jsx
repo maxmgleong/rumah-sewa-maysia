@@ -411,7 +411,7 @@ export default function AdminPanel({ properties, onSave, onBack, tenants, onUpda
         <div className="flex items-center gap-3 mb-4">
           <button onClick={onBack} className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
             <ArrowLeft size={20} className="text-white" /></button>
-          <h1 className="text-white text-lg font-bold">🏠 Admin Panel</h1>
+          <h1 className="text-white text-lg font-bold flex-1">🏠 Angel Home Pro Admin</h1>
         </div>
         {/* Tab Switcher */}
         <div className="flex gap-2">
